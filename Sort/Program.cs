@@ -22,10 +22,9 @@
             DebugPrint(array.ToList());
             Debug.WriteLine("--------");
 
-            // ソーター生成
-            var sorter = new BubbleSorter();
+            // バブルソート生成
+            var sorter = new MergeSorter();
             sorter.OnUpdate += (sender, e) => DebugPrint(array.ToList());
-
             // ソート実行
             sorter.Sort(array);
         }

@@ -6,38 +6,44 @@
     using System.Linq;
     using System.Text;
 
+    /// <summary>
+    /// バブルソート
+    /// </summary>
     public class BubbleSorter : ISorter
     {
         public event EventHandler OnBegin;
+
         public event EventHandler OnUpdate;
+
         public event EventHandler OnComplete;
 
-        public void Sort<T>(IList<T> a) where T : IComparable<T>
+        public void Sort<T>(IList<T> array) where T : IComparable<T>
         {
             // 引数チェック
-            Contract.Requires(a != null);
+            Contract.Requires(array != null);
 
             // OnBeginイベント
             if (this.OnBegin != null)
             {
+                // はじまるよ～
                 this.OnBegin(this, EventArgs.Empty);
             }
 
             // ソート開始
-            int n = a.Count - 1;
+            int count = array.Count - 1;
             
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < count; i++)
             {
-                for (int j = n; i < j; j--)
+                for (int j = count; i < j; j--)
                 {
                     int k = j - 1;
 
-                    if (a[j].CompareTo(a[k]) < 0)
+                    if (array[j].CompareTo(array[k]) < 0)
                     {
                         // スワップする
-                        T x  = a[j];
-                        a[j] = a[k];                     
-                        a[k] = x;
+                        T tmp = array[j];
+                        array[j] = array[k];                     
+                        array[k] = tmp;
 
                         // OnUpdateイベント
                         if (OnUpdate != null)
