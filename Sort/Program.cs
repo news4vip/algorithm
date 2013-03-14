@@ -17,16 +17,24 @@
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            // データ準備
-            int[] array = { 9, 7, 8, 5, 6, 3, 4, 1, 2, 0 };
-            DebugPrint(array.ToList());
-            Debug.WriteLine("--------");
-
             // バブルソート生成
-            var sorter = new MergeSorter();
-            sorter.OnUpdate += (sender, e) => DebugPrint(array.ToList());
-            // ソート実行
-            sorter.Sort(array);
+            var sorters = new List<ISorter>() {
+                //new BubbleSorter(),
+                //new MergeSorter(),
+                new InsertSorter(),
+            };
+
+            foreach (var sorter in sorters)
+            {
+                // データ準備
+                int[] array = { 9, 7, 8, 5, 6, 3, 4, 1, 2, 0 };
+                DebugPrint(array.ToList());
+                Debug.WriteLine("--------");
+
+                sorter.OnUpdate += (sender, e) => DebugPrint(array.ToList());
+                // ソート実行
+                sorter.Sort(array);
+            }
         }
 
         static void DebugPrint(List<int> array)
