@@ -51,6 +51,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  
+  <!-- Begin: App.config -->
   <ItemGroup>
     <Content Include="App.config" />
   </ItemGroup>
@@ -62,11 +64,30 @@
       <DependentUpon>App.config</DependentUpon>
     </None>
   </ItemGroup>
+  <!-- End: App.config -->
+  
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
-  <Target Name="PostTransformAppConfig" AfterTargets="Build">
+
+  <!-- App.config 置換処理 -->
+  <!-- Target Name="PostTransformAppConfig" AfterTargets="Build">
     <CallTarget Targets="TransformWebConfig" />
     <Copy Condition="Exists('$(TransformWebConfigIntermediateLocation)\transformed\App.config')" SourceFiles="$(TransformWebConfigIntermediateLocation)\transformed\App.config" DestinationFiles="$(OutputPath)\$(AssemblyName).exe.config" />
     <Copy Condition="Exists('$(TransformWebConfigIntermediateLocation)\transformed\App.config')" SourceFiles="$(TransformWebConfigIntermediateLocation)\transformed\App.config" DestinationFiles="$(OutputPath)\$(AssemblyName).vshost.exe.config" />
+  </Target -->
+
+  <!-- App.config 置換処理 (TFSの自動ビルド対応版) -->
+  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\Web\Microsoft.Web.Publishing.Tasks.dll" />
+  <Target Name="AfterCompile" Condition="exists('App.$(Configuration).config')">
+    <!-- Generate transformed App.config in the intermediate directory -->
+    <TransformXml Source="App.config" Destination="$(IntermediateOutputPath)$(TargetFileName).config" Transform="App.$(Configuration).config" />
+    <!-- Force build process to use the transformed configuration file from now on. -->
+    <ItemGroup>
+      <AppConfigWithTargetPath Remove="App.config" />
+      <AppConfigWithTargetPath Include="$(IntermediateOutputPath)$(TargetFileName).config">
+        <TargetPath>$(TargetFileName).config</TargetPath>
+      </AppConfigWithTargetPath>
+    </ItemGroup>
   </Target>
+
 </Project>
